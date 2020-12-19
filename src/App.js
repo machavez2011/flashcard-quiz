@@ -25,7 +25,7 @@ function App() {
   }, [])
 
   return (
-    <div>
+    <div className='container'>
       <FlashcardList flashcards={flashcards} />
     </div>
   );
