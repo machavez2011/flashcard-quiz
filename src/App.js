@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import FlashcardList from './FlashcardList';
 import './app.css'
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 
 function App() {
-  const [flashcards, setFlashcards] = useState(SAMPLE_FLASHCARDS);
+  const [flashcards, setFlashcards] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const categoryEl = useRef();
@@ -18,8 +17,14 @@ function App() {
       })
   }, [])
 
-  useEffect(() => {
-    axios.get('https://opentdb.com/api.php?amount=10')
+  function handleSubmit(e) {
+    e.preventDefault();
+    axios.get('https://opentdb.com/api.php', {
+      params: {
+        amount: amountEl.current.value,
+        category: categoryEl.current.value
+      }
+    })
       .then(res => {
         setFlashcards(res.data.results.map((questionItem, index) => {
           const answer = decodeStr(questionItem.correct_answer);
@@ -33,12 +38,6 @@ function App() {
           }
         }))
       })
-      .catch(err => console.log(err))
-  }, [])
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
   }
 
   return (
@@ -72,32 +71,5 @@ function decodeStr(str) {
   textArea.innerHTML = str;
   return textArea.value;
 }
-
-const SAMPLE_FLASHCARDS = [
-  {
-    id: 1,
-    question: 'What is 2 + 2',
-    answer: '4',
-    options: [
-      '2', '3', '4', '5'
-    ]
-  },
-  {
-    id: 2,
-    question: 'What is 1 + 1',
-    answer: '2',
-    options: [
-      '2', '3', '4', '5'
-    ]
-  },
-  {
-    id: 3,
-    question: 'What is 2 + 3',
-    answer: '5',
-    options: [
-      '2', '3', '4', '5'
-    ]
-  }
-]
 
 export default App;
